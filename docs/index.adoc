@@ -1,6 +1,38 @@
-Test ...
+# Beginning with Enonic XP
 
-This is for 6.12
+This guide will guide you as a web developer completely new to Enonic XP. You will however need to install it first. Follow the link:http://docs.enonic.com/en/stable/getstarted/other.html[installation guide for developers] in our docs. It will go through the steps needed for setting up the correct Java version, and then installing the correct Enonic XP version.
 
-http://docs.enonic.com/en/stable/reference/toolbox/init-project.html
-toolbox.sh init-project -n com.company.myapp -r starter-base
+This guide is written for Enonic XP *6.12* (referred to as just _XP_ for short) and might not work without adjustments in earlier (or later) versions of XP.
+
+## App using jQuery and Bootstrap
+
+We will build an Enonic App that runs on XP and uses some popular frameworks/libraries in the front, like jQuery and Bootstrap.
+
+### Initial project structure
+
+To get started with your first app, having XP running, you need to first setup your app's file structure, its skeleton. To make this process easier for you, we having something called link:https://market.enonic.com/starters[Starters] on our Market and on our Github account. You can use any of these starters, but I'll go for link:https://market.enonic.com/vendors/enonic/vanilla-starter[starter-vanilla] in this guide.
+
+With this starter you will get all the folders and files Enonic Apps need. It will also include Gradle for you, the tool we use to build our apps. Using a Starter also ensures you follow best practise.
+
+link:http://docs.enonic.com/en/stable/reference/toolbox/init-project.html[A link]
+
+```bash
+toolbox.sh init-project -n com.company.myapp -r starter-vanilla
+```
+
+link:https://github.com/enonic/starter-vanilla[Vanilla starter]
+
+TIP: Test
+
+NOTE: Test
+
+IMPORTANT: Test
+
+CAUTION: Test
+
+WARNING: Test
+
+.Block title
+====
+Content Block
+====
