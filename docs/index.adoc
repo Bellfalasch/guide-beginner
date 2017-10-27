@@ -1,0 +1,6 @@
+Test ...
+
+This is for 6.12
+
+http://docs.enonic.com/en/stable/reference/toolbox/init-project.html
+toolbox.sh init-project -n com.company.myapp -r starter-base
