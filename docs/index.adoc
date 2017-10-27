@@ -1,3 +1,6 @@
+:toc: right
+:imagesdir: ./screens
+
 # Beginning with Enonic XP
 
 This guide will guide you as a web developer completely new to Enonic XP. You will however need to install it first. Follow the link:http://docs.enonic.com/en/stable/getstarted/other.html[installation guide for developers] in our docs. It will go through the steps needed for setting up the correct Java version, and then installing the correct Enonic XP version.
@@ -205,15 +208,27 @@ NOTE: Did you delete the wrong folder by mistake? Just create it again, with the
 
 #### site.xml & application.xml
 
-Inside `/src/main/resources/` and `/src/main/resources/site/` we find these two files. They define some text and settings for the app that XP admin interface will use.
+Inside `/src/main/resources/` and `/src/main/resources/site/` we find these two files. They define some text and settings for the app that XP admin interface will use. For this guide, `site.xml` is not used, but it can be used to add settings for your app so that the end-user can control things, like footer text, contact email, and so on.
 
-IMPORTANT: Test
+Open the `application.xml` file and write a nice description of your app. This will be used together with the `displayName` property from the `gradle.properties` file to give users installing and maintaining apps in XP a brief summary of your app.
 
-CAUTION: Test
+.application.xml
+[source,xml]
+----
+<application>
+  <description>My first Enonic App, using jQuery 3 and Bootstrap 4!</description>
+</application>
+----
 
-WARNING: Test
+We'll see this later, but to XP your app will look like this in the admin interface:
 
-.Block title
-====
-Content Block
-====
+image::app-name.png[]
+
+See, very helpful for the end-user to see something like that instead of just the name of your root folder (which is the default behaviour).
+
+TIP: You can even change that icon if you like. Any .svg file named `application.svg` in that location will be used as your app's icon.
+
+
+
+http://jquery.com/download/
+http://getbootstrap.com/docs/4.0/getting-started/download/
