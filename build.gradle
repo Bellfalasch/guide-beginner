@@ -1,6 +1,4 @@
 plugins {
-    id 'java'
-    id 'jacoco'
     id 'maven'
     id 'com.enonic.xp.app' version '1.0.13'
     id 'com.enonic.xp.doc' version '1.0.7'
