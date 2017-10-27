@@ -4,27 +4,184 @@ This guide will guide you as a web developer completely new to Enonic XP. You wi
 
 This guide is written for Enonic XP *6.12* (referred to as just _XP_ for short) and might not work without adjustments in earlier (or later) versions of XP.
 
+## What you'll be learning
+
+After finishing this guide, this is what you can expect to lear:
+
+* Install and run XP
+* Use a Starter to initiate a Enonic app
+* "Build" this app using Gradle
+* Basic use of XP's Content Studio
+* Adding your app to a website in XP
+* Managing updates to your app
+* What many basic folders and files in an Enonic app does
+
 ## App using jQuery and Bootstrap
 
 We will build an Enonic App that runs on XP and uses some popular frameworks/libraries in the front, like jQuery and Bootstrap.
 
-### Initial project structure
+### Kickstart any Enonic app project
 
-To get started with your first app, having XP running, you need to first setup your app's file structure, its skeleton. To make this process easier for you, we having something called link:https://market.enonic.com/starters[Starters] on our Market and on our Github account. You can use any of these starters, but I'll go for link:https://market.enonic.com/vendors/enonic/vanilla-starter[starter-vanilla] in this guide.
+To get started with your first app, having XP running, you need to first setup your app's file structure, its skeleton. To make this process easier for you, we having something called link:https://market.enonic.com/starters[Starters] on our Market and on our Github account. You can use any of these starters, but I'll go for link:https://market.enonic.com/vendors/enonic/vanilla-starter[starter-vanilla] version *1.2.0* in this guide.
 
 With this starter you will get all the folders and files Enonic Apps need. It will also include Gradle for you, the tool we use to build our apps. Using a Starter also ensures you follow best practise.
 
-link:http://docs.enonic.com/en/stable/reference/toolbox/init-project.html[A link]
+### Init project
+
+XP comes with a handy command line tool called the *Toolbox*. It has many capabilities, among others the link:http://docs.enonic.com/en/stable/reference/toolbox/init-project.html[init-project] function. It basically lets you clone any git repo out there into your own folder.
+
+Lets use `init-project` from our command line and clone `starter-vanilla` as the basis for our project.
+
+First, create the folder you will add this project to and enter it using the command line.
 
 ```bash
-toolbox.sh init-project -n com.company.myapp -r starter-vanilla
+mkdir app-jquery
+cd app-jquery
 ```
 
-link:https://github.com/enonic/starter-vanilla[Vanilla starter]
+Now you need to locate your XP install folder, I'll be referring to it as *$XP_INSTALL* from now on. Inside the main folder you'll see many sub folders, one of them is the `toolbox` folder. In it is where the `toolbox.sh` (or `toolbox.bat`) is located. But stay inside the $XP_INSTALL main folder and copy the path to it.
 
-TIP: Test
+Now head back to the terminal window that's inside your new `app-jquery` folder. Type this:
 
-NOTE: Test
+```bash
+[$XP_INSTALL]/toolbox/toolbox.sh init-project -n com.company.app.jquery -r app-jquery
+```
+
+You should replace `[$XP_INSTALL]` with the actual path you copied earlier to XP's installation folder.
+
+Executing this command will do a few things. First it will go into Enonic's Github account (but you can also clone from other Github accounts, or even other git sources like Bitbucket) and clone that project into the folder you are currently in. It will also update some setting files in that project. Let's break that command into a few parts.
+
+`toolbox.sh init-project` - this will execute the `init-project` function from the Toolbox.
+
+`-n com.company.app.jquery` - this will name your new app, this is something that will be injected into a file called `gradle.properties` that resides in the root of any Enonic app. It is a unique name that will be used by XP to connect any content in Content Studio with this app, it is also used to see if the app is updated or not. So this is a important name.
+
+IMPORTANT: Changing this name after an app is deployed will disconnect all stored data from the app, and XP will treat it as a completely new app. It is possible to mend such a situation, but it is a bit cumbersome so its better to try and avoid renaming an app after you begin developing it.
+
+`-r starter-vanilla` - This is the name/url to the repo at link:https://github.com/enonic/[github.com/enonic] that you want to clone.
+
+TIP: Writing `-r *myAccount*/myRepo` would let you select another Github account to clone from, where "myRepo" is the name of the repo to clone.
+
+You've now successfully cloned a skeleton for an Enonic app that actually can run in XP, even if it doesn't do anything, yet.
+
+### Inspecting the files
+
+The Enonic documentation has excellent link:http://docs.enonic.com/en/stable/developer/projects/structure.html[overview of all the folders and files] you find now in your local `app-jquery` folder. From the command line type `atom .` and hit enter to open the entire project in the Atom code editor. If you don't use Atom, just open the entire folder in the editor of your choice.
+
+#### gradle.properties
+
+You'll see `gradle.properties` in the root. It will look like this (if you ran that exact toolbox command as I did):
+
+```properties
+#
+# Project settings
+#
+group = com.company
+projectName = app.jquery
+appName = com.company.app.jquery
+displayName = App.jquery
+xpVersion = 6.12.0
+version = 1.0.0-SNAPSHOT
+```
+
+These are settings for Gradle, the build system we use. It tells Gradle the name of the artifact (the resulting .jar-file) we want (in this case it will be `app.jquery.1.0.0-SNAPSHOT.jar`), meaning `projectName` and `version` properties are used together to form a unique file name for the app. This file name is not important, but the version is important for XP to know if you are adding a newer version of your app, or a new app all together.
+
+NOTE: `xpVersion` just defines which XP version you are using JavaScript libraries from. It's no problem to mix versions, meaning you can set `xpVersion` to `6.3.0` and still be able to run that app with XP 6.12. This makes upgrading XP a no-brainer.
+
+Let's adjust the `displayName` property. It is auto-generated from the full appName you set using the `-n` parameter with toolbox init-project. Let's change that to "My jQuery+Bootstrap App". This is something XP will display in the admin interface to identify your app. The line would then look like this:
+
+```properties
+displayName = My jQuery+Bootstrap App
+```
+
+Save and head to the next file we'll edit.
+
+#### build.gradle
+
+Yet another Gradle-file, but this is the last one. This file contains dependencies and important instructions for Gradle.
+
+[source]
+----
+plugins {
+    id 'java' # <1>
+    id 'com.enonic.xp.app' version '1.0.13'
+}
+
+xp {
+  version = xpVersion # <2>
+}
+
+app {
+    name = project.ext.appName # <3>
+    displayName = project.ext.displayName # <4>
+    vendorName = 'Enonic AS' # <5>
+    vendorUrl = 'http://enonic.com' # <6>
+}
+
+dependencies {
+    compile "com.enonic.xp:core-api:${xpVersion}"
+    compile "com.enonic.xp:portal-api:${xpVersion}"
+    include "com.enonic.xp:lib-content:${xpVersion}" # <7>
+    include "com.enonic.xp:lib-portal:${xpVersion}"
+    include "com.enonic.xp:lib-thymeleaf:${xpVersion}"
+    //include "com.enonic.xp:lib-mustache:${xpVersion}" # <7>
+    //include "com.enonic.xp:lib-i18n:${xpVersion}" # <7>
+    //include "com.enonic.xp:lib-auth:${xpVersion}" # <7>
+    //include "com.enonic.xp:lib-context:${xpVersion}" # <7>
+    //include "com.enonic.xp:lib-io:${xpVersion}" # <7>
+    //include "com.enonic.xp:lib-mail:${xpVersion}" # <7>
+    //include "com.enonic.xp:lib-repo:${xpVersion}" # <7>
+    //include "com.enonic.xp:lib-websocket:${xpVersion}" # <7>
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+    xp.enonicRepo()
+}
+----
+<1> This line can be removed, it is only used if you intend to write Java in your app.
+<2> The version of XP to use for building the resulting app jar, as defined in `gradle.properties`.
+<3> Name of app artifact (jar-file), as defined in `gradle.properties`.
+<4> Display name of app in XP admin interface, as defined in `gradle.properties`.
+<5> Who built this app. Not used by XP, only for reference.
+<6> Link to the developers website. Not used by XP, only for reference.
+<7> Different JavaScript libraries your app will use, all that are marked can be removed.
+
+This will lead to a file looking like this:
+
+.build.gradle
+[source]
+----
+plugins {
+    id 'com.enonic.xp.app' version '1.0.13'
+}
+
+xp {
+  version = xpVersion
+}
+
+app {
+    name = project.ext.appName
+    displayName = project.ext.displayName
+    vendorName = 'Enonic AS'
+    vendorUrl = 'http://enonic.com'
+}
+
+dependencies {
+    compile "com.enonic.xp:core-api:${xpVersion}"
+    compile "com.enonic.xp:portal-api:${xpVersion}"
+    include "com.enonic.xp:lib-portal:${xpVersion}"
+    include "com.enonic.xp:lib-thymeleaf:${xpVersion}"
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+    xp.enonicRepo()
+}
+----
+
+Line 3 in here
 
 IMPORTANT: Test
 
