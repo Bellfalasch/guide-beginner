@@ -259,7 +259,7 @@ TIP: Environment variables created this way is convenient and fast, but they wil
 In the same terminal window "cd" into your project folder `app-jquery`. Now issue the `deploy` command to Gradle that will get your code into XP.
 
 ```bash
-.gradlew deploy
+./gradlew deploy
 ```
 
 That's it. If you log into XP on link:localhost:8080[localhost:8080] you will see the app as registered in the admin tool called *Applications*.
