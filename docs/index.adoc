@@ -181,7 +181,31 @@ repositories {
 }
 ----
 
-Line 3 in here
+That trimmed our file down quite a bit. If you intend to expand your app's capabilities later, you'll be adding link:http://docs.enonic.com/en/stable/reference/libraries/index.html[other JavaScript libraries] to the `dependencies` section (and rebuild the app).
+
+Let's move on.
+
+#### /src/main/resources/
+
+This folder is the important one. This is basically where your app code is located. The other folders are not important (`gradle`-folder is only used by Gradle, it will also create a `build`-folder for temporary files).
+
+Since we'll be using this app for a very specific purpose - creating a website using jQuery and Bootstrap, there's a lot of folders and functions we just won't need. We can delete these folders right now:
+
+* `/src/main/java` - used for extending app with Java.
+* `/src/main/resources/admin` - used for extending the admin interface in XP.
+* `/src/main/resources/services` - used for callable functions exposed through a URL (like REST api:s).
+* `/src/main/resources/views` - used for commonly used HTML-templates.
+* `/src/main/resources/site/filters` - used to intercept traffic to the app.
+* `/src/main/resources/site/i18n` - used for translations.
+* `/src/main/resources/site/mixins` - used to share settings between forms.
+
+With all these folders deleted we only have what we need.
+
+NOTE: Did you delete the wrong folder by mistake? Just create it again, with the same name and location as before. It's not more magical than that.
+
+#### site.xml & application.xml
+
+Inside `/src/main/resources/` and `/src/main/resources/site/` we find these two files. They define some text and settings for the app that XP admin interface will use.
 
 IMPORTANT: Test
 
